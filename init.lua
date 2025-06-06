@@ -336,9 +336,7 @@ require('lazy').setup({
     dependencies = {
       'nvim-tree/nvim-web-devicons',
     },
-    config = function()
-      require('nvim-tree').setup {}
-    end,
+    config = function() require('nvim-tree').setup {} end,
   },
 
   -- NOTE: Plugins can specify dependencies.
