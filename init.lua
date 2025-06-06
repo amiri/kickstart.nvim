@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -109,6 +109,13 @@ vim.o.mouse = 'a'
 
 -- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
+
+-- disable netrw at the very start of your init.lua
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
+-- optionally enable 24-bit colour
+vim.opt.termguicolors = true
 
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
@@ -351,6 +358,23 @@ require('lazy').setup({
     },
   },
 
+  {
+    'mrcjkb/haskell-tools.nvim',
+    version = '^4', -- Recommended
+    lazy = false, -- This plugin is already lazy
+  },
+  {
+    'nvim-tree/nvim-tree.lua',
+    version = '*',
+    lazy = false,
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('nvim-tree').setup {}
+    end,
+  },
+
   -- NOTE: Plugins can specify dependencies.
   --
   -- The dependencies are proper plugin specifications as well - anything
@@ -474,6 +498,18 @@ require('lazy').setup({
         { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
       },
     },
+  },
+  {
+    'ellisonleao/gruvbox.nvim',
+    priority = 1000,
+    config = function()
+      require('gruvbox').setup {
+        contrast = 'hard',
+        palette_overrides = {
+          dark0_hard = '#000000',
+        },
+      }
+    end,
   },
   {
     -- Main LSP Configuration
@@ -894,7 +930,16 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+<<<<<<< Updated upstream
       vim.cmd.colorscheme 'tokyonight-night'
+=======
+      vim.cmd 'colorscheme gruvbox'
+      vim.cmd "let g:gruvbox_contrast_dark = 'hard'"
+      vim.o.background = 'dark' -- or "light" for light mode
+
+      -- You can configure highlights by doing something like:
+      vim.cmd.hi 'Comment gui=none'
+>>>>>>> Stashed changes
     end,
   },
 
