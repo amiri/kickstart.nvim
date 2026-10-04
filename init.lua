@@ -87,6 +87,7 @@ P.S. You can delete this when you're done too. It's your config now! :)
 
 local utils = require 'my_utils'
 
+vim.g.lazyvim_prettier_needs_config = false
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
@@ -227,9 +228,7 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 -- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Recommended: use 'x' (Visual) mode for alignment actions
-vim.keymap.set('x', 'ga', function()
-  require('mini.align').align()
-end, { desc = 'Align text interactively', buffer = true, silent = true })
+vim.keymap.set('x', 'ga', function() require('mini.align').align() end, { desc = 'Align text interactively', buffer = true, silent = true })
 
 -- -- Optional: use 'n' (Normal) mode to align a text object (e.g., gawip to align a paragraph)
 -- vim.keymap.set('n', 'ga', function()
@@ -258,15 +257,11 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 --
 -- [[ Luau filetype detection ]]
 -- Automatically recognise .lua as luau files in a Roblox project
-if utils.rojo_project() then
-  vim.filetype.add {
-    extension = {
-      lua = function(path)
-        return path:match '%.nvim%.lua$' and 'lua' or 'luau'
-      end,
-    },
-  }
-end
+if utils.rojo_project() then vim.filetype.add {
+  extension = {
+    lua = function(path) return path:match '%.nvim%.lua$' and 'lua' or 'luau' end,
+  },
+} end
 
 vim.filetype.add {
   extension = {
@@ -336,7 +331,6 @@ require('lazy').setup({
   -- you do for a plugin at the top level, you can do for a dependency.
   --
   -- Use the `dependencies` key to specify the dependencies of a particular plugin
-
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
