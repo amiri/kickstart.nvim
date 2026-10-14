@@ -50,12 +50,18 @@ return {
 
         -- Execute a code action, usually your cursor needs to be on top of an error
         -- or a suggestion from your LSP for this to activate.
-        map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
+        -- map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
 
         -- WARN: This is not Goto Definition, this is Goto Declaration.
         --  For example, in C this would take you to the header.
         map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
+        map('K', vim.lsp.buf.hover, 'Hover def')
+        map('gd', vim.lsp.buf.definition, 'Goto def')
+        map('<leader>ca', vim.lsp.buf.code_action, 'Execute code action')
+        -- vim.keymap.set('n', 'K', vim.lsp.buf.hover, {})
+        -- vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
+        -- vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, {})
         -- The following two autocommands are used to highlight references of the
         -- word under your cursor when your cursor rests there for a little while.
         --    See `:help CursorHold` for information about when this is executed
@@ -90,9 +96,7 @@ return {
         --
         -- This may be unwanted, since they displace some of your code
         if client and client:supports_method('textDocument/inlayHint', event.buf) then
-          map('<leader>th', function()
-            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-          end, '[T]oggle Inlay [H]ints')
+          map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
         end
       end,
     })
@@ -150,6 +154,45 @@ return {
     -- end
 
     -- Configure lsp's with `vim.lsp.config`, see `:help vim.lsp.config`
+    vim.lsp.config('ts_ls', {
+      cmd = { 'typescript-language-server', '--stdio' },
+      filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
+      settings = {
+        typescript = {
+          inlayHints = {
+            includeInlayParameterNameHints = 'all',
+          },
+        },
+      },
+    })
+    vim.lsp.config('lua_ls', {
+      on_init = function(client)
+        if client.workspace_folders then
+          local path = client.workspace_folders[1].name
+          if path ~= vim.fn.stdpath 'config' and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc')) then return end
+        end
+
+        client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+          runtime = {
+            version = 'LuaJIT',
+            path = { 'lua/?.lua', 'lua/?/init.lua' },
+          },
+          workspace = {
+            checkThirdParty = false,
+            -- NOTE: this is a lot slower and will cause issues when working on your own configuration.
+            --  See https://github.com/neovim/nvim-lspconfig/issues/3189
+            library = vim.api.nvim_get_runtime_file('', true),
+          },
+        })
+      end,
+      settings = {
+        Lua = {},
+      },
+    })
+
+    -- Enable the language server
+    vim.lsp.enable 'ts_ls'
+    vim.lsp.enable 'lua_ls'
 
     -- Special Lua Config, as recommended by neovim help docs
   end,

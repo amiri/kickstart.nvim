@@ -5,7 +5,7 @@ return {
       'lua-language-server',
       'luau-lsp',
       'stylua',
-      'vtsls',
+      'ts_ls',
       'eslint-lsp',
       'prettierd',
       'json-lsp',
